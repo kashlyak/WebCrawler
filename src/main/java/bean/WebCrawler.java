@@ -35,7 +35,7 @@ public class WebCrawler {
     {
         try {
             csvPrinter = new CSVPrinter(writer, CSVFormat.DEFAULT
-                        .withHeader("Link", "Count"));
+                    .withHeader("Link", "Count"));
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -43,36 +43,34 @@ public class WebCrawler {
 
     public void search(String url, List<String> searchWord, int depth) throws IOException {
         while (this.pagesVisited.size() < MAX_PAGES_TO_SEARCH) {
-            if (depth++ < MAX_DEPTH){
+            if (depth++ < MAX_DEPTH) {
                 String currentUrl;
-            WebCrawlerService leg = new WebCrawlerService();
-            if (this.pagesToVisit.isEmpty()) {
-                currentUrl = url;
-                this.pagesVisited.add(url);
-            } else {
-                currentUrl = this.nextUrl();
-            }
-            leg.crawl(currentUrl);
+                WebCrawlerService leg = new WebCrawlerService();
+                if (this.pagesToVisit.isEmpty()) {
+                    currentUrl = url;
+                    this.pagesVisited.add(url);
+                } else {
+                    currentUrl = this.nextUrl();
+                }
+                leg.crawl(currentUrl);
                 csvPrinter.printRecord(currentUrl);
-            for (String word : searchWord) {
+                for (String word : searchWord) {
 
-                System.out.println(leg.searchForWord(word));
+                    System.out.println(leg.searchForWord(word));
 
 
-
-                    csvPrinter.printRecord( leg.searchForWord(word));
+                    csvPrinter.printRecord(leg.searchForWord(word));
 
                     csvPrinter.flush();
 
+                }
+
+
+                this.pagesToVisit.addAll(leg.getLinks());
             }
-
-
-            this.pagesToVisit.addAll(leg.getLinks());
-        }
         }
         System.out.println("\n**Done** Visited " + this.pagesVisited.size() + " web page(s)");
     }
-
 
 
     private String nextUrl() {
